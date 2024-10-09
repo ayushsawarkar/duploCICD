@@ -1,0 +1,12 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"   # Maps host's port 80 to container's port 80
+    networks:
+      - host
+
+networks:
+  host:
+    driver: bridge
