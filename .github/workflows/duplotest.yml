@@ -74,4 +74,4 @@ jobs:
       with:
         name: frontend-deployment
         image: ${{ inputs.image }}
-        type: service
+        type: frontend-deployment
