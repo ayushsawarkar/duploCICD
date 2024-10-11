@@ -1,12 +1,24 @@
-name: Publish Image
+name: Publish and Update Service
+
 on:
   # Triggers the workflow on push to matching branches
   push:
     branches:
-    - main
-  # (Optional) Allows users to trigger the workflow manually from the GitHub UI
-  workflow_dispatch: {}
-  # (Optional) Allow other workflows to use this workflow and its outputs
+      - main
+  # Allows users to trigger the workflow manually from the GitHub UI
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: The environment to deploy to
+        type: environment
+        default: dev
+        required: true
+      image:
+        description: The full image URI
+        type: string
+        required: true
+
+  # Allows other workflows to use this workflow and its outputs
   workflow_call: 
     outputs:
       image:
@@ -20,7 +32,6 @@ on:
 env:
   DUPLO_HOST: ${{ vars.DUPLO_HOST }}
   DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
-  # Images are usually stored in a dedicated tenant, so the name doesn't change
   DUPLO_TENANT: ayushtnt
 
 jobs:
@@ -30,25 +41,25 @@ jobs:
     outputs:
       image: ${{ steps.build_image.outputs.uri }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    # Configures DuploCloud and the host cloud, for example, AWS
-    - name: Cloud CI Setup
-      uses: duplocloud/actions/setup@v0.0.5
+      # Configures DuploCloud and the host cloud, for example, AWS
+      - name: Cloud CI Setup
+        uses: duplocloud/actions/setup@v0.0.5
     
-    # logs into the registry, configures Docker, builds the image, and lastly pushes
-    - name: Build and Push Docker Image
-      id: build_image
-      uses: duplocloud/actions/build-image@v0.0.5
-      with:
-        platforms: linux/amd64,linux/arm64
-        push: true # false for dry runs
-        build-args: >
-          foo=bar
-          ice_cream=chocolate
-          name=${{ github.repository }}
+      # logs into the registry, configures Docker, builds the image, and lastly pushes
+      - name: Build and Push Docker Image
+        id: build_image
+        uses: duplocloud/actions/build-image@v0.0.5
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true # false for dry runs
+          build-args: >
+            foo=bar
+            ice_cream=chocolate
+            name=${{ github.repository }}
+
   update_service:
     name: Update Service
     runs-on: ubuntu-latest
@@ -58,20 +69,19 @@ jobs:
       DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
       DUPLO_HOST: ${{ vars.DUPLO_HOST  }}
       DUPLO_TENANT: ${{ vars.DUPLO_TENANT }}
-    steps: 
-    
-    # install and login to the cloud
-    - name: Duplo Setup
-      uses: duplocloud/actions/setup@v0.0.5
-      # only required on gcp and azure
-      with:
-        account-id: ${{ vars.CLOUD_ACCOUNT }}
-        credentials: ${{ secrets.CLOUD_CREDENTIALS }}
+    needs: build_image  # Make sure this job runs after the build_image job
+    steps:
+      # install and login to the cloud
+      - name: Duplo Setup
+        uses: duplocloud/actions/setup@v0.0.5
+        with:
+          account-id: ${{ vars.CLOUD_ACCOUNT }}
+          credentials: ${{ secrets.CLOUD_CREDENTIALS }}
 
-    # uses duploctl from above
-    - name: Update Service
-      uses: duplocloud/actions/update-image@v0.0.5
-      with:
-        name: frontend-deployment
-        image: ${{ needs.build_image.outputs.image }}
-        type: service
+      # Update the service with the new image
+      - name: Update Service
+        uses: duplocloud/actions/update-image@v0.0.5
+        with:
+          name: frontend-deployment
+          image: ${{ needs.build_image.outputs.image }}
+          type: service
