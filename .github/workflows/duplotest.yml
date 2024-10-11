@@ -73,5 +73,5 @@ jobs:
       uses: duplocloud/actions/update-image@v0.0.5
       with:
         name: frontend-deployment
-        image: ${{ inputs.image }}
+        image: ${{ needs.build_image.outputs.image }}
         type: service
