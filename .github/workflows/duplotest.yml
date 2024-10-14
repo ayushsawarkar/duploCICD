@@ -65,8 +65,6 @@ jobs:
     name: Update Service
     runs-on: ubuntu-latest
     environment: ayushtnt
-    environment: 
-      name: ${{ inputs.environment }}
     env:
       DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
       DUPLO_HOST: ${{ vars.DUPLO_HOST  }}
