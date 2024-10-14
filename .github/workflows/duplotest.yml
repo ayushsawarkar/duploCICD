@@ -29,8 +29,8 @@ jobs:
       - name: Duplo Setup
         uses: duplocloud/actions/setup@v0.0.5
         with:
-          account-id: ${{ secrets.CLOUD_ACCOUNT }}  # This is pulled from the 'demo' environment
-          credentials: ${{ secrets.CLOUD_CREDENTIALS }}  # From the 'demo' environment
+          account-id: ${{ secrets.CLOUD_ACCOUNT }}  # Pulling secret from 'demo' environment
+          credentials: ${{ secrets.CLOUD_CREDENTIALS }}  # Pulling secret from 'demo' environment
 
       - name: Debug Selected Environment
         run: echo "Environment: demo is selected"
