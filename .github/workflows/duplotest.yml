@@ -10,7 +10,7 @@ on:
     inputs:
       environment:
         description: The environment to deploy to
-        type: environment
+        type: environment  # Keeping this to select an environment
         default: ayushtnt
         required: true
       image:
@@ -38,6 +38,7 @@ jobs:
   build_image:
     name: Build and Push Image
     runs-on: ubuntu-latest
+    environment: ayushtnt
     outputs:
       image: ${{ steps.build_image.outputs.uri }}
     steps:
