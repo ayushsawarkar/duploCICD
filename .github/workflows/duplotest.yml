@@ -1,27 +1,16 @@
-name: Publish and Update Service
-
+name: Branch-Deployment
 on:
-  # Triggers the workflow on push to matching branches
-  push:
-    branches:
-      - main
-  # Allows users to trigger the workflow manually from the GitHub UI
   workflow_dispatch:
     inputs:
       environment:
-        description: The environment to deploy to
-        type: environment
+        type: choice
+        description: Select the environment to deploy. For dev environment select develop, to deploy in production select master, to deploy in qa environment select qa
         options:
           - develop
           - qa
           - gcp
+#         - master
 
-      # image:
-      #   description: The full image URI
-      #   type: string
-      #   required: true
-
-  # Allows other workflows to use this workflow and its outputs
   workflow_call:
     # outputs:
       # image:
@@ -47,3 +36,11 @@ jobs:
         with:
           account-id: ${{ vars.CLOUD_ACCOUNT }}
           credentials: ${{ vars.CLOUD_CREDENTIALS }}
+
+
+
+        
+ 
+
+
+    
