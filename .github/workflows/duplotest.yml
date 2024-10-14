@@ -64,6 +64,7 @@ jobs:
   update_service:
     name: Update Service
     runs-on: ubuntu-latest
+    environment: ayushtnt
     environment: 
       name: ${{ inputs.environment }}
     env:
