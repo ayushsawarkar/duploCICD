@@ -8,7 +8,11 @@ on:
   # Allows users to trigger the workflow manually from the GitHub UI
   workflow_dispatch:
     inputs:
-      environment: demo
+      environment:
+        description: The environment to deploy to (e.g., demo, production)
+        type: string  # Use string type instead of environment
+        default: demo
+        required: true
       # image:
       #   description: The full image URI
       #   type: string
