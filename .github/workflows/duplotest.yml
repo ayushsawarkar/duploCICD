@@ -3,13 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        type: choice
+        type: environment
         description: Select the environment to deploy. For dev environment select develop, to deploy in production select master, to deploy in qa environment select qa
-        options:
-          - develop
-          - qa
-          - gcp
-          - demo
+        default: demo
 #         - master
 
   workflow_call:
