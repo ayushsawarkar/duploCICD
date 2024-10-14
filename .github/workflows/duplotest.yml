@@ -19,7 +19,7 @@ on:
       #   required: true
 
   # Allows other workflows to use this workflow and its outputs
-  workflow_call: 
+  workflow_call:
     # outputs:
       # image:
       #   description: The URI of the image
@@ -28,60 +28,19 @@ on:
       DUPLO_TOKEN:
         description: The token to use for DuploCloud API calls
         required: true
-
 env:
   DUPLO_HOST: ${{ vars.DUPLO_HOST }}
   DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
   DUPLO_TENANT: demo
-
 jobs:
-  build: 
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       # Configures DuploCloud and the host cloud, for example, AWS
       - name: Duplo Setup
         uses: duplocloud/actions/setup@v0.0.5
         with:
           account-id: ${{ vars.CLOUD_ACCOUNT }}
-          credentials: ${{ secrets.CLOUD_CREDENTIALS }}
-    
-      # logs into the registry, configures Docker, builds the image, and lastly pushes
-      # - name: Build and Push Docker Image
-      #   id: build_image
-      #   uses: duplocloud/actions/build-image@v0.0.5
-      #   with:
-      #     platforms: linux/amd64,linux/arm64
-      #     push: true # false for dry runs
-      #     build-args: >
-      #       foo=bar
-      #       ice_cream=chocolate
-      #       name=${{ github.repository }}
-
-  # update_service:
-  #   name: Update Service
-  #   runs-on: ubuntu-latest
-  #   environment: 
-  #     name: ${{ inputs.environment }}
-  #   env:
-  #     DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
-  #     DUPLO_HOST: ${{ vars.DUPLO_HOST  }}
-  #     DUPLO_TENANT: ${{ vars.DUPLO_TENANT }}
-  #   needs: build_image  # Make sure this job runs after the build_image job
-  #   steps:
-  #     # install and login to the cloud
-  #     - name: Duplo Setup
-  #       uses: duplocloud/actions/setup@v0.0.5
-  #       with:
-  #         account-id: ${{ vars.CLOUD_ACCOUNT }}
-  #         credentials: ${{ secrets.CLOUD_CREDENTIALS }}
-
-  #     # Update the service with the new image
-  #     - name: Update Service
-  #       uses: duplocloud/actions/update-image@v0.0.5
-  #       with:
-  #         name: frontend-deployment
-  #         image: ${{ needs.build_image.outputs.image }}
-  #         type: service
+          credentials: ${{ vars.CLOUD_CREDENTIALS }}
