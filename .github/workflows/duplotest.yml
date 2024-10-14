@@ -9,6 +9,7 @@ on:
           - develop
           - qa
           - gcp
+          - demo
 #         - master
 
   workflow_call:
